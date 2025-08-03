@@ -208,7 +208,7 @@ Same will also reflect in the Audit events as shown below
 Apache 2.0 License
 
 ## ✍️ Blog Post
-Detailed explanation soon at [k2ddna.com](https://www.k2ddna.com/2025/08/trino-apache-ranger-on-kubernetes.html)
+Detailed explanation at [k2ddna.com](https://www.k2ddna.com/2025/08/trino-apache-ranger-on-kubernetes.html)
 
 ## 🙌 Acknowledgements
 * [Trino](https://trino.io/)
