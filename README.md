@@ -95,7 +95,7 @@ Trino is configured to use Ranger only for access control. The following files a
 * ranger-trino-security.xml
 * ranger-trino-audit.xml
 
-Use the Ranger Admin UI (http://<ranger-admin-ip>:6080) to define Trino policies.
+Use the Ranger Admin UI (http://< ranger-admin-ip >:6080) to define Trino policies.
 
 📁 Example Policy Types
 * queryid → ExecuteQuery
