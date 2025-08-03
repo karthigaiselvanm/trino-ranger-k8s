@@ -106,3 +106,66 @@ Without UserSync, you would have to manually create users and groups in Ranger A
 ⚙️ Optional but Recommended
 * Ranger Admin is mandatory to manage policies.
 * Ranger UserSync is optional but recommended for production deployments using LDAP or Active Directory.
+
+### 4. Creating docker image that integrates Apache Ranger with its required backend services *MySQL* as policy db and *Solr* as audit store.
+
+ Lets unarchive the compiled *ranger-<version>-admin.tar.gz* package from *target/* directory to *ranger-docker/ranger-packages* using the below command
+
+ ```bash
+tar -xvzf ranger/target/ranger-3.0.0-SNAPSHOT-admin.tar.gz -C trino-ranger-k8s/ranger-docker/ranger-packages/
+```
+
+Once it is successfully unarchived the folder directory of *ranger-docker/* will look as below
+```text
+.
+├── Dockerfile
+├── install.properties
+├── ranger-entrypoint.sh
+├── ranger-packages
+│   └── ranger-3.0.0-SNAPSHOT-admin
+└── README.md
+```
+
+Lets dive into each file in details:
+
+### 1. Dockerfile
+Defines how the Apache Ranger Admin container is built.
+It:
+
+* Uses Ubuntu 20.04 as base
+* Installs Java 11 and dependencies
+* Copies the pre-built Ranger Admin distribution and MySQL connector
+* Prepares for automated setup using install.properties and entrypoint script
+
+### 2. install.properties
+Configuration file used by Ranger’s setup.sh installer.
+It contains:
+
+* Database settings (e.g., MySQL host, username, password)
+* Solr audit log endpoint
+* Ranger service name and repository name
+* Paths to JDBC drivers and Java home
+* Optional settings like skipping UNIX group sync
+
+### 3. ranger-entrypoint.sh
+Startup script used inside the container.
+It:
+
+* Waits briefly for MySQL to become ready
+* Runs Ranger's setup.sh to initialize the DB and configs
+* Starts the Ranger Admin service
+* Keeps the container running by tailing logs or sleeping indefinitely
+
+### 4. ranger-packages/
+Directory where the built Ranger Admin tarball is extracted (e.g., ranger-3.0.0-SNAPSHOT-admin/).
+This folder is copied into the container by the Dockerfile.
+
+![ranger-docker-struct](/src/images/ranger-docker-struct.png)
+
+Execute the below command to create a docker image named *apache-ranger-admin:3.0.0* which then can be registered in ECR or in hub.docker.com
+
+```bash
+docker build -t apache-ranger-admin:3.0.0 .
+```
+
+![docker-ranger](/src/images/docker-ranger.png)
