@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: trino-coordinator
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: trino-coordinator-svc
+  replicas: {{ .Values.trino.replicas }}
+  selector:
+    matchLabels:
+      app: trino-coordinator
+  template:
+    metadata:
+      labels:
+        app: trino-coordinator
+    spec:
+      containers:
+        - name: trino
+          image: {{ .Values.trino.image }}
+          ports:
+            - containerPort: {{ .Values.trino.port }}
+              name: http
+          volumeMounts:
+            - name: trino-config
+              mountPath: /etc/trino
+            - name: ranger-xml
+              mountPath: /etc/trino/ranger
+            - name: catalog-config
+              mountPath: /etc/trino/catalog              
+      volumes:
+        - name: trino-config
+          configMap:
+            name: trino-config
+        - name: catalog-config
+          configMap:
+            name: trino-catalog            
+        - name: ranger-xml
+          configMap:
+            name: ranger-trino-config

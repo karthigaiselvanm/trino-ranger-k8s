@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranger-solr
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ranger-solr
+  template:
+    metadata:
+      labels:
+        app: ranger-solr
+    spec:
+      initContainers:
+        - name: init-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z -v -w30 ranger-mysql 3306; do echo "Waiting for MySQL service..."; sleep 5; done;']
+      containers:
+        - name: ranger-solr
+          image: {{ .Values.solr.image }}
+          ports:
+            - containerPort: 8983
+          volumeMounts:
+            - name: solr-config-volume
+              mountPath: /opt/solr/server/solr/configsets/ranger_audits
+          command: ["solr-precreate", "ranger_audits", "/opt/solr/server/solr/configsets/ranger_audits"]
+      volumes:
+        - name: solr-config-volume
+          configMap:
+            name: solr-config

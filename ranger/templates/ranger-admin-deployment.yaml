@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ranger-admin-server
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ranger-admin-server
+  template:
+    metadata:
+      labels:
+        app: ranger-admin-server
+    spec:
+      initContainers:
+        - name: init-solr
+          image: busybox
+          command: ['sh', '-c', 'until wget -qO- http://ranger-solr:8983/solr/ranger_audits/admin/ping; do echo "Waiting for Solr service..."; sleep 5; done;']
+      containers:
+        - name: ranger-admin-server
+          image: {{ .Values.rangerAdmin.image }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: {{ .Values.rangerAdmin.port }}
+              protocol: TCP

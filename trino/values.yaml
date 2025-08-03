@@ -1,0 +1,10 @@
+namespace: ranger
+
+trino:
+  image: trinodb/trino:latest
+  replicas: 1
+  port: 8080
+  superUser: admin
+  rangerServiceName: trino-ranger-service
+  rangerAdminUrl: http://ranger-admin:6080
+  solrAuditUrl: http://ranger-solr:8983/solr/ranger_audits

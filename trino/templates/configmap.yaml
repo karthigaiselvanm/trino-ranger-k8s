@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trino-config
+  namespace: {{ .Values.namespace }}
+data:
+  node.properties: |
+    node.environment=production
+    node.id=coordinator-1
+    node.data-dir=/data/trino
+
+  config.properties: |
+    coordinator=true
+    node-scheduler.include-coordinator=true
+    http-server.http.port={{ .Values.trino.port }}
+    discovery-server.enabled=true
+    discovery.uri=http://localhost:{{ .Values.trino.port }}
+
+  access-control.properties: |
+    ranger.service.name={{ .Values.trino.rangerServiceName }}
+    access-control.name=ranger
+
+  jvm.config: |
+    -server
+    -Xmx2G
+    -XX:+UseG1GC
+    -XX:+UseGCOverheadLimit
+    -XX:+ExplicitGCInvokesConcurrent
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:ReservedCodeCacheSize=512M
+    -Dlog.levels-file=/etc/trino/log.properties
+    -Dcatalog.config-dir=/etc/trino/catalog
+    -Dranger.plugin.config.resource=/etc/trino/ranger/ranger-trino-security.xml,/etc/trino/ranger/ranger-trino-audit.xml
+    -Dranger.service.name={{ .Values.trino.rangerServiceName }}
+
+  log.properties: |
+    io.trino=INFO
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ranger-trino-config
+  namespace: {{ .Values.namespace }}
+data:
+  ranger-trino-security.xml: |
+    <configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+      <property>
+        <name>ranger.plugin.trino.policy.rest.url</name>
+        <value>{{ .Values.trino.rangerAdminUrl }}</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.access.cluster.name</name>
+        <value>trino-cluster</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.use.rangerGroups</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.use.only.rangerGroups</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.super.users</name>
+        <value>{{ .Values.trino.superUser }}</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.ugi.initialize</name>
+        <value>false</value>
+      </property>
+      <property>
+        <name>ranger.plugin.trino.users.implied.roles</name>
+        <value>*:*</value>
+      </property>
+    </configuration>
+
+  ranger-trino-audit.xml: |
+    <configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+      <property>
+        <name>xasecure.audit.is.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>xasecure.audit.solr.is.enabled</name>
+        <value>true</value>
+      </property>
+      <property>
+        <name>xasecure.audit.solr.solr_url</name>
+        <value>{{ .Values.trino.solrAuditUrl }}</value>
+      </property>
+    </configuration>

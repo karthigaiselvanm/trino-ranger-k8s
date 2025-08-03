@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solr-config
+  namespace: {{ .Values.namespace }}
+data:
+  solrconfig.xml: |-
+    {{- .Files.Get "files/solrconfig.xml" | nindent 4 }}
+  managed-schema: |-
+    {{- .Files.Get "files/managed-schema.xml" | nindent 4 }}

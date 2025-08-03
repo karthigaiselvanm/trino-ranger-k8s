@@ -1,0 +1,12 @@
+namespace: ranger
+mysql:
+  image: mysql:8.0.26
+  rootPassword: Admin1234!
+  user: rangeradmin
+  password: Admin1234!
+  database: ranger
+solr:
+  image: solr:8.11.2
+rangerAdmin:
+  image: karthigaiselvanm/apache-ranger-k8s:0.0.1
+  port: 6080

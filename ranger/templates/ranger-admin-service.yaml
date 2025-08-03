@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ranger-admin
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: ranger-admin-server
+  ports:
+    - name: http
+      port: {{ .Values.rangerAdmin.port }}
+      targetPort: {{ .Values.rangerAdmin.port }}
+      protocol: TCP
