@@ -11,6 +11,12 @@ This project provides a Helm-based deployment of [Trino](https://trino.io/) inte
 - Optional TPCH connector
 - All configuration via Helm values
 
+## 📌 Prerequisites
+
+Before deploying, ensure you’ve built a custom Docker image of Apache Ranger with the required backend services like MySQL and Solr included.  
+Follow this detailed guide:  
+➡️ [Building Apache Ranger from Source and Creating Custom Docker Image](https://www.k2ddna.com/2025/08/building-apache-ranger-from-source.html)
+
 ## 📦 Repository Structure
 
 
