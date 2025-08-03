@@ -127,7 +127,7 @@ Trino will automatically pick up /etc/trino/catalog/tpch.properties.
 Apache 2.0 License
 
 ## ✍️ Blog Post
-Detailed explanation coming soon at k2ddna.com
+Detailed explanation coming soon at [k2ddna.com](https://www.k2ddna.com/)
 
 ## 🙌 Acknowledgements
 * [Trino](https://trino.io/)
